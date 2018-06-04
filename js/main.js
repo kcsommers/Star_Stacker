@@ -19,121 +19,127 @@ var gridColumns = [{
 	leftY: 0,
 	rightY: 50,
 	bottomX: 650,
-	pieces: []  
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
+	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''} 
 },
 {
 	name: 'col1',
 	leftY: 50,
 	rightY: 100,
 	bottomX: 650,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
+	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
 },
 {
 	name: 'col2',
 	leftY: 100,
 	rightY: 150,
 	bottomX: 650,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
+	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
 }, 
 {
 	name: 'col3',
 	leftY: 150,
 	rightY: 200,
 	bottomX: 650,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
+	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
 }, 
 {
 	name: 'col4',
 	leftY: 200,
 	rightY: 250,
 	bottomX: 650,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
+	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
 }, 
 {
 	name: 'col5',
 	leftY: 250,
 	rightY: 300,
 	bottomX: 650,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
+	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
 }];
 
 var gridRows = [{
 	name: 'row0',
 	bottomX: 650,
 	topX: 600,
-	pieces: []  
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}  
 },
 {
 	name: 'row1',
 	bottomX: 600,
 	topX: 550,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 },
 {
 	name: 'row2',
 	bottomX: 550 ,
 	topX: 500,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 }, 
 {
 	name: 'row3',
 	bottomX: 500,
 	topX: 450,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 }, 
 {
 	name: 'row4',
 	bottomX: 450,
 	topX: 400,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 }, 
 {
 	name: 'row5',
 	bottomX: 400,
 	topX: 350,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 },
 {
 	name: 'row6',
 	bottomX: 350,
 	topX: 300,
-	pieces: []  
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 },
 {
 	name: 'row7',
 	bottomX: 300,
 	topX: 250,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 },
 {
 	name: 'row8',
 	bottomX: 250 ,
 	topX: 200,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 }, 
 {
 	name: 'row9',
 	bottomX: 200,
 	topX: 150,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 }, 
 {
 	name: 'row10',
 	bottomX: 150,
 	topX: 100,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 }, 
 {
 	name: 'row11',
 	bottomX: 100,
 	topX: 50,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 },
 {
 	name: 'row12',
 	bottomX: 100,
 	topX: 50,
-	pieces: []
+	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
 }];
 var horizArray = [];
 var vertArray = [];
@@ -242,25 +248,35 @@ var Column = function(x, y) {
 		}
 		else {
 			// update gridColumn/gridRows when column object lands,
-			// update gridColumn/gridRows pieces
-			gridColumns[currentGridCol].bottomX -= 150;
-			gridColumns[currentGridCol].pieces.push(this.gem1, this.gem2, this.gem3);
 			// figure out order of gems before updating
+			gridColumns[currentGridCol].bottomX -= 150;
 			if(this.y === this.gem1.y) {
-				gridRows[currentGridRow].pieces.push(this.gem3);
-				gridRows[currentGridRow + 1].pieces.push(this.gem2);
-				gridRows[currentGridRow + 2].pieces.push(this.gem1);
+				gridColumns[currentGridCol].squares[currentGridRow] = this.gem3.color;
+				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem2.color;
+				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem1.color;
+
+				gridRows[currentGridRow].squares[currentGridCol] = this.gem3.color;
+				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem2.color;
+				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem1.color;
 			}
 			else if(this.y === this.gem3.y) {
-				gridRows[currentGridRow].pieces.push(this.gem2);
-				gridRows[currentGridRow + 1].pieces.push(this.gem1);
-				gridRows[currentGridRow + 2].pieces.push(this.gem3);
+				gridColumns[currentGridCol].squares[currentGridRow] = this.gem2.color;
+				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem1.color;
+				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem3.color;
+
+				gridRows[currentGridRow].squares[currentGridCol] = this.gem2.color;
+				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem1.color;
+				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem3.color;
 			}
 			else {
-				gridRows[currentGridRow].pieces.push(this.gem1);
-				gridRows[currentGridRow + 1].pieces.push(this.gem3);
-				gridRows[currentGridRow + 2].pieces.push(this.gem2);
-			}
+				gridColumns[currentGridCol].squares[currentGridRow] = this.gem1.color;
+				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem3.color;
+				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem2.color;
+
+				gridRows[currentGridRow].squares[currentGridCol] = this.gem1.color;
+				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem3.color;
+				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem2.color;
+			}	
 			// create new column
 			columnCounter += 1;
 			createColumn();
@@ -273,20 +289,26 @@ var Column = function(x, y) {
 				this.changeOrder();
 				break;
 			case 39:
-				this.x += 50;
-				this.gem1.x += 50;
-				this.gem2.x += 50;
-				this.gem3.x += 50;
-				this.left += 50;
-				this.drawColumns();
+				// if the squares in the next column over are empty
+				if(!gridColumns[currentGridCol + 1].squares[currentGridRow]) {
+					this.x += 50;
+					this.gem1.x += 50;
+					this.gem2.x += 50;
+					this.gem3.x += 50;
+					this.left += 50;
+					this.drawColumns();
+				}
 				break;
 			case 37:
-				this.x -= 50;
-				this.gem1.x -= 50;
-				this.gem2.x -= 50;
-				this.gem3.x -= 50;
-				this.left -= 50;
-				this.drawColumns();
+				// if the squares in the next column over are empty
+				if(!gridColumns[currentGridCol - 1].squares[currentGridRow]) {
+					this.x -= 50;
+					this.gem1.x -= 50;
+					this.gem2.x -= 50;
+					this.gem3.x -= 50;
+					this.left -= 50;
+					this.drawColumns();
+				}
 				break;
 			case 40:
 				this.drop();

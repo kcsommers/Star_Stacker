@@ -78,47 +78,47 @@ var gridRows = [{
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	id: 'row4',
+	id: 4,
 	bottomX: 450,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	id: 'row5',
+	id: 5,
 	bottomX: 400,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	id: 'row6',
+	id: 6,
 	bottomX: 350,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	id: 'row7',
+	id: 7,
 	bottomX: 300,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	id: 'row8',
+	id: 8,
 	bottomX: 250 ,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	id: 'row9',
+	id: 9,
 	bottomX: 200,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	id: 'row10',
+	id: 10,
 	bottomX: 150,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	id: 'row11',
+	id: 11,
 	bottomX: 100,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	id: 'row12',
+	id: 12,
 	bottomX: 100,
 	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }];

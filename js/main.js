@@ -15,131 +15,112 @@ var animateInterval, thisColumn, currentGridCol, currentGridRow;
 // ******* Main grid ****** //
 
 var gridColumns = [{
-	name: 'col0',
+	id: 0,
 	leftY: 0,
-	rightY: 50,
 	bottomX: 650,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
-	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''} 
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
+	7: null, 8: null, 9: null, 10: null, 11: null, 12: null} 
 },
 {
-	name: 'col1',
+	id: 1,
 	leftY: 50,
-	rightY: 100,
 	bottomX: 650,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
-	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
+	7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
 },
 {
-	name: 'col2',
+	id: 2,
 	leftY: 100,
-	rightY: 150,
 	bottomX: 650,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
-	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
+	7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
 }, 
 {
-	name: 'col3',
+	id: 3,
 	leftY: 150,
-	rightY: 200,
 	bottomX: 650,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
-	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
+	7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
 }, 
 {
-	name: 'col4',
+	id: 4,
 	leftY: 200,
-	rightY: 250,
 	bottomX: 650,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
-	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
+	7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
 }, 
 {
-	name: 'col5',
+	id: 5,
 	leftY: 250,
-	rightY: 300,
 	bottomX: 650,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 
-	7: '', 8: '', 9: '', 10: '', 11: '', 12: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
+	7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
 }];
 
 var gridRows = [{
-	name: 'row0',
+	id: 0,
 	bottomX: 650,
-	topX: 600,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}  
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}  
 },
 {
-	name: 'row1',
+	id: 1,
 	bottomX: 600,
-	topX: 550,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	name: 'row2',
+	id: 2,
 	bottomX: 550 ,
-	topX: 500,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	name: 'row3',
+	id: 3,
 	bottomX: 500,
-	topX: 450,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	name: 'row4',
+	id: 'row4',
 	bottomX: 450,
-	topX: 400,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	name: 'row5',
+	id: 'row5',
 	bottomX: 400,
-	topX: 350,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	name: 'row6',
+	id: 'row6',
 	bottomX: 350,
-	topX: 300,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	name: 'row7',
+	id: 'row7',
 	bottomX: 300,
-	topX: 250,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	name: 'row8',
+	id: 'row8',
 	bottomX: 250 ,
-	topX: 200,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	name: 'row9',
+	id: 'row9',
 	bottomX: 200,
-	topX: 150,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	name: 'row10',
+	id: 'row10',
 	bottomX: 150,
-	topX: 100,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }, 
 {
-	name: 'row11',
+	id: 'row11',
 	bottomX: 100,
-	topX: 50,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 },
 {
-	name: 'row12',
+	id: 'row12',
 	bottomX: 100,
-	topX: 50,
-	squares: {0: '', 1: '', 2: '', 3: '', 4: '', 5: ''}
+	squares: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null}
 }];
 var horizArray = [];
 var vertArray = [];
@@ -236,7 +217,7 @@ var Column = function(x, y) {
 	};
 
 	this.drop = function() {
-		// if current column bottom is less than current gridColumn bottom
+		// current column drops if its bottom is less than current gridColumn bottom
 		if(this.bottom < gridColumns[currentGridCol].bottomX) {
 			this.y += 25;
 			this.bottom += 25;
@@ -246,37 +227,56 @@ var Column = function(x, y) {
 			this.gem3.y += 25;
 			this.drawColumns();
 		}
-		else {
-			// update gridColumn/gridRows when column object lands,
-			// figure out order of gems before updating
+		else { // this is all the info that needs to be collected 
+				// when column is done falling
 			gridColumns[currentGridCol].bottomX -= 150;
+			this.gem1.column = currentGridCol;
+			this.gem2.column = currentGridCol;
+			this.gem3.column = currentGridCol;
+
+			// if gem1 is on top
 			if(this.y === this.gem1.y) {
-				gridColumns[currentGridCol].squares[currentGridRow] = this.gem3.color;
-				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem2.color;
-				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem1.color;
+				gridColumns[currentGridCol].squares[currentGridRow] = this.gem3;
+				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem2;
+				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem1;
 
-				gridRows[currentGridRow].squares[currentGridCol] = this.gem3.color;
-				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem2.color;
-				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem1.color;
-			}
+				gridRows[currentGridRow].squares[currentGridCol] = this.gem3;
+				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem2;
+				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem1;
+
+				this.gem3.row = currentGridRow;
+				this.gem2.row = currentGridRow + 1;
+				this.gem1.row = currentGridRow + 2;
+
+			} // if gem3 is on top
 			else if(this.y === this.gem3.y) {
-				gridColumns[currentGridCol].squares[currentGridRow] = this.gem2.color;
-				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem1.color;
-				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem3.color;
+				gridColumns[currentGridCol].squares[currentGridRow] = this.gem2;
+				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem1;
+				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem3;
 
-				gridRows[currentGridRow].squares[currentGridCol] = this.gem2.color;
-				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem1.color;
-				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem3.color;
+				gridRows[currentGridRow].squares[currentGridCol] = this.gem2;
+				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem1;
+				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem3;
+
+				this.gem2.row = currentGridRow;
+				this.gem1.row = currentGridRow + 1;
+				this.gem3.row = currentGridRow + 2;
 			}
-			else {
-				gridColumns[currentGridCol].squares[currentGridRow] = this.gem1.color;
-				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem3.color;
-				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem2.color;
+			else { // if gem2 is  on top
+				gridColumns[currentGridCol].squares[currentGridRow] = this.gem1;
+				gridColumns[currentGridCol].squares[currentGridRow + 1] = this.gem3;
+				gridColumns[currentGridCol].squares[currentGridRow + 2] = this.gem2;
 
-				gridRows[currentGridRow].squares[currentGridCol] = this.gem1.color;
-				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem3.color;
-				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem2.color;
-			}	
+				gridRows[currentGridRow].squares[currentGridCol] = this.gem1;
+				gridRows[currentGridRow + 1].squares[currentGridCol] = this.gem3;
+				gridRows[currentGridRow + 2].squares[currentGridCol] = this.gem2;
+
+				this.gem1.row = currentGridRow;
+				this.gem3.row = currentGridRow + 1;
+				this.gem2.row = currentGridRow + 2;
+			}
+			console.log(thisColumn);
+			checkMatches(thisColumn);	
 			// create new column
 			columnCounter += 1;
 			createColumn();
@@ -288,26 +288,30 @@ var Column = function(x, y) {
 			case 38:
 				this.changeOrder();
 				break;
-			case 39:
-				// if the squares in the next column over are empty
-				if(!gridColumns[currentGridCol + 1].squares[currentGridRow]) {
-					this.x += 50;
-					this.gem1.x += 50;
-					this.gem2.x += 50;
-					this.gem3.x += 50;
-					this.left += 50;
-					this.drawColumns();
+			case 39: // if its not in the last column
+				if(currentGridCol < 5) {
+					// if the squares in the next column are empty
+					if(!gridColumns[currentGridCol + 1].squares[currentGridRow]) {
+						this.x += 50;
+						this.gem1.x += 50;
+						this.gem2.x += 50;
+						this.gem3.x += 50;
+						this.left += 50;
+						this.drawColumns();
+					}
 				}
 				break;
-			case 37:
-				// if the squares in the next column over are empty
-				if(!gridColumns[currentGridCol - 1].squares[currentGridRow]) {
-					this.x -= 50;
-					this.gem1.x -= 50;
-					this.gem2.x -= 50;
-					this.gem3.x -= 50;
-					this.left -= 50;
-					this.drawColumns();
+			case 37: // if its not in the first column
+				if(currentGridCol > 0) {
+					// if the squares in the previous column are empty
+					if(!gridColumns[currentGridCol - 1].squares[currentGridRow]) {
+						this.x -= 50;
+						this.gem1.x -= 50;
+						this.gem2.x -= 50;
+						this.gem3.x -= 50;
+						this.left -= 50;
+						this.drawColumns();
+					}
 				}
 				break;
 			case 40:
@@ -334,7 +338,6 @@ var Column = function(x, y) {
 		}
 		this.drawColumns();
 	};
-
 };
 
 // determine which gridColumn the current Column object is in
@@ -361,15 +364,18 @@ var gridRowsChecker = function(col) {
 	else if(col.bottom === 200) currentGridRow = 9;
 	else if(col.bottom === 150) currentGridRow = 10;
 	else if(col.bottom === 100) currentGridRow = 11;
-}
+};
 
 var createColumn = function() {
 	columnsArray.push(new Column(175, -125));
 	columnsArray[columnCounter].drawColumns();
-}
+};
 
 // ******************************* //
 
+var checkMatches = function(col) {
+
+};
 
 var init = function() {
 	// draw grid
@@ -380,12 +386,10 @@ var init = function() {
 	animateInterval = setInterval(function() {
 		thisColumn.drop();
 	}, 500);
-
-}
+};
 
 $(document).ready(function() {
 	init();
-
 	// add arrow key event listener to document
 	$(document).on('keydown', function(e) {
 		thisColumn.move(e);

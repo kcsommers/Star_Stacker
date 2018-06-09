@@ -132,7 +132,6 @@ var Gem = function(x, y, radius, color) {
 	thisGem = this;
 	this.x = x;
 	this.y = y;
-	this.bottom = this.y - 25;
 	this.radius = radius;
 	this.color = color;
 	this.falling = true;
@@ -265,48 +264,48 @@ var scoreKeeper = function(matchArr, matchCount) {
 	player1Turn ? player1Score += total : player2Score += total;
 };
 
-let intervalsArr = [];
-var dropHangers = function(hangingGems) {
+// let intervalsArr = [];
+// var dropHangers = function(hangingGems) {
 	
-	let hangingStacks = [];
-	hangingGems.forEach(function(gem1, i) {
-		let colGems = [gem1];
-		let x = 1;
-		while( gridColumns[gem1.column].rows[gem1.row + x] ) {
-			colGems.push(gridColumns[gem1.column].rows[gem1.row + x]);
-			x++;}
-		colGems.forEach((gem2) => {
-			gem2.dropDistance = (gridColumns[gem1.column].bottom - (gem1.y + 25)) + (50 * colGems.length);
-		});
-		hangingStacks.push(colGems);
-	});
+// 	let hangingStacks = [];
+// 	hangingGems.forEach(function(gem1, i) {
+// 		let colGems = [gem1];
+// 		let x = 1;
+// 		while( gridColumns[gem1.column].rows[gem1.row + x] ) {
+// 			colGems.push(gridColumns[gem1.column].rows[gem1.row + x]);
+// 			x++;}
+// 		colGems.forEach((gem2) => {
+// 			gem2.dropDistance = (gridColumns[gem1.column].bottom - (gem1.y + 25)) + (50 * colGems.length);
+// 		});
+// 		hangingStacks.push(colGems);
+// 	});
 
-	let allHangers = hangingStacks.reduce((acc, curr) => {return acc.concat(curr)}, []);
+// 	let allHangers = hangingStacks.reduce((acc, curr) => {return acc.concat(curr)}, []);
 
-	allHangers.forEach((gem, i) => {
-		gridColumns[gem.column].rows[gem.row] = null;
+// 	allHangers.forEach((gem, i) => {
+// 		gridColumns[gem.column].rows[gem.row] = null;
 
-		let counter = 0;
-		intervalsArr.push(setInterval(function() {
+// 		let counter = 0;
+// 		intervalsArr.push(setInterval(function() {
 
-			if(counter < (gem.dropDistance / 5)) {
-				gem.y += 5;
-				counter++;
-			}
-			else {
-				clearInterval(intervalsArr[i]);
-				gem.row = rowChecker(gem.y + 25);
-				gridColumns[gem.column].rows[gem.row] = gem;
-				checkMatches(allHangers);
-				allHangers.length = 0;
-			}
+// 			if(counter < (gem.dropDistance / 5)) {
+// 				gem.y += 5;
+// 				counter++;
+// 			}
+// 			else {
+// 				clearInterval(intervalsArr[i]);
+// 				gem.row = rowChecker(gem.y + 25);
+// 				gridColumns[gem.column].rows[gem.row] = gem;
+// 				checkMatches(allHangers);
+// 				allHangers.length = 0;
+// 			}
 
-			ctx.clearRect(0, 0, innerWidth, innerHeight);
-			drawGrid();
-			gem.draw();
-			thisStack.drawStack();
-		}));
-	});
+// 			ctx.clearRect(0, 0, innerWidth, innerHeight);
+// 			drawGrid();
+// 			gem.draw();
+// 			thisStack.drawStack();
+// 		}));
+// 	});
 
 	// hangersInterval = setInterval(function() {
 	// 	allHangers.forEach(function(gem) {
@@ -324,7 +323,6 @@ var dropHangers = function(hangingGems) {
 	// 	thisStack.drawStack();
 	// }, 50);
 
-	
 
 	// let intervals = [];
 	// hangingStacks.forEach(function(stack) {
@@ -351,121 +349,185 @@ var dropHangers = function(hangingGems) {
 	// 		}, 50));
 	// 	}
 	// });
+// };
+
+var dropHangers = function(hangersArr, spaceObj) {
+	let intervalsArr = [];
+	hangersArr.forEach((gem, i) => {
+
+		gridColumns[gem.column].rows[gem.row] = null;
+		let yCount = 0;
+		intervalsArr.push(setInterval(function() {
+			if( yCount < (spaceObj[gem.column] / 5) ) {
+				console.log('tick');
+				gem.y += 5;
+				yCount++;
+			} 
+			else {	
+				clearInterval(intervalsArr[i]);
+				gem.row = rowChecker(gem.y + 25);
+				gridColumns[gem.column].rows[gem.row] = gem;
+				console.log('clear');
+			}
+			ctx.clearRect(0, 0, innerWidth, innerHeight);
+			drawGrid();
+			gem.draw();
+			thisStack.drawStack();
+		}, 10));
+	});
 };
 
 var removeGems = function(matchesArr) {
-	let hangingGems = []; 
-	console.log(matchesArr);
-	matchesArr.forEach(function(gem) {	
+	let hangingGems = [];
+	let allHangers = [];
+	let spaceObj = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+	matchesArr.forEach(function(gem) {
 		gridColumns[gem.column].rows[gem.row] = null;
-		console.log(gridColumns[gem.column].rows[gem.row]);
 		gridColumns[gem.column].bottom += 50;
 		delete stackArray[gem.stackId][gem.gemId];
-		if( gridColumns[gem.column].rows[gem.row + 1] ) {
+		if(gridColumns[gem.column].rows[gem.row + 1]) {
 			hangingGems.push(gridColumns[gem.column].rows[gem.row + 1]);
 		}
 		gem = null;
 	});
-	console.log('second matchArr: ', matchesArr);
-	if(hangingGems.length){
+	hangingGems.forEach((gem) => {
+		let j = 1;
+		while( gridColumns[gem.column].rows[gem.row - j] >= 0
+			&& !gridColumns[gem.column].rows[gem.row - j] ) {
+			spaceObj[gem.column] += 50;
+			j++;
+		}
+
+		let i = 1;
+		while( gridColumns[gem.column].rows[gem.row + i] ) {
+			hangingGems.push(gridColumns[gem.column].rows[gem.row + i]);
+			i++;
+		} 
+	});
+
+	if(hangingGems.length) {
 		clearInterval(dropInterval);
-		dropHangers(hangingGems);
-	} 
-};
+		dropHangers(hangingGems, spaceObj);
+	};
+}
 
-var checkMatches = function(gemArr) {
-	let matchesArr = [];
-	gemArr.forEach(function(gem) {
-		let upCount = 1;
-		let downCount = 1;
-		let colMatches = [gem];
-		let leftCount = 1;
-		let rightCount = 1;
-		let rowMatches = [gem];
-		let d1LeftCount = 1;
-		let d1RightCount = 1;
-		let d1Matches = [gem];
-		let d2LeftCount = 1;
-		let d2RightCount = 1;
-		let d2Matches = [gem];
+// var removeGems = function(matchesArr) {
+// 	let hangingGems = []; 
+// 	matchesArr.forEach(function(gem) {	
+// 		gridColumns[gem.column].rows[gem.row] = null;
+// 		console.log(gridColumns[gem.column].rows[gem.row]);
+// 		gridColumns[gem.column].bottom += 50;
+// 		delete stackArray[gem.stackId][gem.gemId];
+// 		if( gridColumns[gem.column].rows[gem.row + 1] ) {
+// 			hangingGems.push(gridColumns[gem.column].rows[gem.row + 1]);
+// 		}
+// 		gem = null;
+// 	});
+// 	console.log('second matchArr: ', matchesArr);
+// 	if(hangingGems.length){
+// 		clearInterval(dropInterval);
+// 		dropHangers(hangingGems);
+// 	} 
+// };
 
-		while( (gridColumns[gem.column].rows[gem.row + upCount]) 
-			&& (gem.color === gridColumns[gem.column].rows[gem.row + upCount].color) ) {
-			// push the matching gem into the array
-			console.log('colUp', gem);
-			colMatches.push(gridColumns[gem.column].rows[gem.row + upCount]);
-			upCount++;}
+var checkMatches = function(stack) {
+	let matches = [];
+	stack.forEach((gem, i) => {
+		let gemColumn = gem.column;
+		let gemRow = gem.row;
+		let color = gem.color;
+		let column = gridColumns[gemColumn];
+		let rows = column.rows;
 
-		// down
-		while( (gridColumns[gem.column].rows[gem.row - downCount]) 
-			&& (gem.color === gridColumns[gem.column].rows[gem.row - downCount].color) ) {
-			console.log('colDown', gem);
-			colMatches.push(gridColumns[gem.column].rows[gem.row - downCount]);
-			downCount++;}
+		// row middle
+		if(gridColumns[gemColumn - 1] && gridColumns[gemColumn - 1].rows[gemRow] 
+			&& gridColumns[gemColumn + 1] && gridColumns[gemColumn + 1].rows[gemRow]
+			&& color === gridColumns[gemColumn - 1].rows[gemRow].color
+			&& color === gridColumns[gemColumn + 1].rows[gemRow].color) {
+			matches.push(gem, gridColumns[gemColumn - 1].rows[gemRow], gridColumns[gemColumn + 1].rows[gemRow]);
+		}
 
-		// left
-			// while the column exists, theres a gem in that columns row, and the colors match
-		while( (gridColumns[gem.column - leftCount]) 
-			&& (gridColumns[gem.column - leftCount].rows[gem.row]) 
-			&& (gem.color === gridColumns[gem.column - leftCount].rows[gem.row].color) ) {
-			console.log('rowL', gem);
-			rowMatches.push(gridColumns[gem.column - leftCount].rows[gem.row]);
-			leftCount++;}
+		// row left
+		if(gridColumns[gemColumn - 1] && gridColumns[gemColumn - 1].rows[gemRow] 
+			&& gridColumns[gemColumn - 2] && gridColumns[gemColumn - 2].rows[gemRow]
+			&& color === gridColumns[gemColumn - 1].rows[gemRow].color
+			&& color === gridColumns[gemColumn - 2].rows[gemRow].color) {
+			matches.push(gem, gridColumns[gemColumn - 1].rows[gemRow], gridColumns[gemColumn - 2].rows[gemRow]);
+		}
 
-		// right
-		while( (gridColumns[gem.column + rightCount]) 
-			&& (gridColumns[gem.column + rightCount].rows[gem.row]) 
-			&& (gem.color === gridColumns[gem.column + rightCount].rows[gem.row].color) ) {
-			console.log('rowR', gem);
-			rowMatches.push(gridColumns[gem.column + rightCount].rows[gem.row]);
-			rightCount++;}
+		// row right
+		if(gridColumns[gemColumn + 1] && gridColumns[gemColumn + 1].rows[gemRow] 
+			&& gridColumns[gemColumn + 2] && gridColumns[gemColumn + 2].rows[gemRow]
+			&& color === gridColumns[gemColumn + 1].rows[gemRow].color
+			&& color === gridColumns[gemColumn + 2].rows[gemRow].color) {
+			matches.push(gem, gridColumns[gemColumn + 1].rows[gemRow], gridColumns[gemColumn + 2].rows[gemRow]);
+		}
+
+		// column middle
+		if(rows[gemRow + 1] && rows[gemRow - 1]
+			&& color === rows[gemRow + 1].color
+			&& color === rows[gemRow - 1].color) {
+			matches.push(gem, rows[gemRow + 1], rows[gemRow - 1]);
+		}
+
+		// column bottom (searching down)
+		if(rows[gemRow - 1] && rows[gemRow - 2]
+			&& color === rows[gemRow - 1].color
+			&& color === rows[gemRow - 2].color) {
+			matches.push(gem, rows[gemRow - 1], rows[gemRow - 2]);
+		}
+
+		// diag1 middle
+		if(gridColumns[gemColumn - 1] && gridColumns[gemColumn - 1].rows[gemRow + 1] 
+			&& gridColumns[gemColumn + 1] && gridColumns[gemColumn + 1].rows[gemRow - 1]
+			&& color === gridColumns[gemColumn - 1].rows[gemRow + 1].color
+			&& color === gridColumns[gemColumn + 1].rows[gemRow - 1].color) {
+			matches.push(gem, gridColumns[gemColumn - 1].rows[gemRow + 1], gridColumns[gemColumn + 1].rows[gemRow - 1]);
+		}
 
 		// diag1 left
-		while( (gridColumns[gem.column - d1LeftCount]) 
-			&& (gridColumns[gem.column - d1LeftCount].rows[gem.row - d1LeftCount])
-			&& (gem.color === gridColumns[gem.column - d1LeftCount].rows[gem.row - d1LeftCount].color) ) {
-			console.log('diag1L', gem);
-			d1Matches.push(gridColumns[gem.column - d1LeftCount].rows[gem.row - d1LeftCount]);
-			d1LeftCount++;}
+		if(gridColumns[gemColumn - 1] && gridColumns[gemColumn - 1].rows[gemRow - 1] 
+			&& gridColumns[gemColumn - 2] && gridColumns[gemColumn - 2].rows[gemRow - 2]
+			&& color === gridColumns[gemColumn - 1].rows[gemRow - 1].color
+			&& color === gridColumns[gemColumn - 2].rows[gemRow - 2].color) {
+			matches.push(gem, gridColumns[gemColumn - 1].rows[gemRow - 1], gridColumns[gemColumn - 2].rows[gemRow - 2]);
+		}
 
 		// diag1 right
-		while( (gridColumns[gem.column + d1RightCount]) 
-			&& (gridColumns[gem.column + d1RightCount].rows[gem.row + d1RightCount])
-			&& (gem.color === gridColumns[gem.column + d1RightCount].rows[gem.row + d1RightCount].color) ) {
-			console.log('diag1R', gem);
+		if(gridColumns[gemColumn + 1] && gridColumns[gemColumn + 1].rows[gemRow + 1] 
+			&& gridColumns[gemColumn + 2] && gridColumns[gemColumn + 2].rows[gemRow + 2]
+			&& color === gridColumns[gemColumn + 1].rows[gemRow + 1].color
+			&& color === gridColumns[gemColumn + 2].rows[gemRow + 2].color) {
+			matches.push(gem, gridColumns[gemColumn + 1].rows[gemRow + 1], gridColumns[gemColumn + 2].rows[gemRow + 2]);
+		}
 
-			d1Matches.push(gridColumns[gem.column + d1RightCount].rows[gem.row + d1RightCount]);
-			d1RightCount++;}
+		// diag2 middle
+		if(gridColumns[gemColumn - 1] && gridColumns[gemColumn - 1].rows[gemRow - 1] 
+			&& gridColumns[gemColumn + 1] && gridColumns[gemColumn + 1].rows[gemRow + 1]
+			&& color === gridColumns[gemColumn - 1].rows[gemRow - 1].color
+			&& color === gridColumns[gemColumn + 1].rows[gemRow + 1].color) {
+			matches.push(gem, gridColumns[gemColumn - 1].rows[gemRow - 1], gridColumns[gemColumn + 1].rows[gemRow + 1]);
+		}
 
 		// diag2 left
-		while( (gridColumns[gem.column - d2LeftCount]) 
-			&& (gridColumns[gem.column - d2LeftCount].rows[gem.row + d2LeftCount])
-			&& (gem.color === gridColumns[gem.column - d2LeftCount].rows[gem.row + d2LeftCount].color) ) {
-			console.log('diag2L', gem)
-			d2Matches.push(gridColumns[gem.column - d2LeftCount].rows[gem.row + d2LeftCount]);
-			d2LeftCount++;}
+		if(gridColumns[gemColumn - 1] && gridColumns[gemColumn - 1].rows[gemRow + 1] 
+			&& gridColumns[gemColumn - 2] && gridColumns[gemColumn - 2].rows[gemRow + 2]
+			&& color === gridColumns[gemColumn - 1].rows[gemRow + 1].color
+			&& color === gridColumns[gemColumn - 2].rows[gemRow + 2].color) {
+			matches.push(gem, gridColumns[gemColumn - 1].rows[gemRow + 1], gridColumns[gemColumn - 2].rows[gemRow + 2]);
+		}
 
 		// diag2 right
-		while( (gridColumns[gem.column + d2RightCount]) 
-			&& (gridColumns[gem.column + d2RightCount].rows[gem.row - d2RightCount])
-			&& (gem.color === gridColumns[gem.column + d2RightCount].rows[gem.row - d2RightCount].color) ) {
-			console.log('diag2R', gem);
-			d2Matches.push(gridColumns[gem.column + d2RightCount].rows[gem.row - d2RightCount]);
-			d2RightCount++;}
+		if(gridColumns[gemColumn + 1] && gridColumns[gemColumn + 1].rows[gemRow - 1] 
+			&& gridColumns[gemColumn + 2] && gridColumns[gemColumn + 2].rows[gemRow - 2]
+			&& color === gridColumns[gemColumn + 1].rows[gemRow - 1].color
+			&& color === gridColumns[gemColumn + 2].rows[gemRow - 2].color) {
+			matches.push(gem, gridColumns[gemColumn + 1].rows[gemRow - 1], gridColumns[gemColumn + 2].rows[gemRow - 2]);
+		}
 
-		matchesArr.push(colMatches, rowMatches, d1Matches, d2Matches);
+		matches = matches.filter((item, index, arr) => {return arr.indexOf(item) === index;});
 	});
-	// filter arrays that are less than 3, concat into one array, filter duplicate gems
-	matchesArr = matchesArr.filter((arr) => {return arr.length >= 3})
-	.reduce((acc, curr) => {return acc.concat(curr)}, [])
-	.filter((item, pos, arr) => {return arr.indexOf(item) === pos});
-	// if any gems are in matches array, pass them to remove function
-	if(matchesArr.length) {
-		match = true;
-		matchCount += 1;
-		removeGems(matchesArr);
-		scoreKeeper(matchesArr, matchCount);
-	}
+	if(matches.length) removeGems(matches);
 };
 
 var columnChecker = function(num) {
@@ -493,7 +555,6 @@ var rowChecker = function(num) {
 };
 
 var createStack = function() {
-	intervalsArr.length = 0;
 	currColumn = 3;
 	currRow = 12;
 	match = false;

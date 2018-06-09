@@ -516,4 +516,3 @@ $(document).ready(function() {
 		thisStack.moveStack(e, e.keyCode);
 	});
 });
-

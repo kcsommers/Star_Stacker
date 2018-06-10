@@ -1,7 +1,160 @@
-body {
+* {
 	margin: 0;
+	padding: 0;
+	font-family: orbitron;
+}
+
+html, body {
+	height: 100%;
+}
+
+body {
+	margin: 5px;
+}
+
+#bg-canvas {
+	background: linear-gradient(to bottom right, #000, #211b27);
+	position: absolute;
+	z-index: -1000;
+	border-radius: 10px;
+}
+
+.game-intro-container {
+	background-color: rgba(55, 55, 55, 0.3);
+	border-radius: 8px;
+	display: flex;
 	align-items: center;
-  	justify-content: center;
-  	min-height: 100vh;
-  	display: flex;
+}
+
+.game-intro {
+	flex: 1;
+	align-items: center;
+	background-color: rgba(155, 47, 251, 0.1);
+	display: flex;
+	padding: 30px 0;
+	border-top: 20px solid rgba(48, 82, 251, 0.1);
+	border-bottom: 20px solid rgba(48, 82, 251, 0.1);
+	margin: 0 auto;
+}
+
+.title, .intro-buttons {
+	flex: 1;
+}
+
+.title {
+	text-align: right;
+	padding-right: 30px;
+}
+
+.intro-buttons {
+	padding-right: 30px;
+}
+
+.title h1 {
+	color: #fff855;
+}
+
+.game-intro button, .instructions-container button {
+	outline: none;
+	font-size: 1.1em;
+	padding: 10px 10px 8px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	background-color: #333334;
+	color: white;
+	margin: 5px;
+}
+
+.instructions-container {
+	flex: 0.7;
+	margin: 0 auto;
+	display: none;
+}
+
+.instructions-container h3 {
+	font-size: 1.4em;
+	color: #fff855;
+}
+
+.instructions-container p {
+	color: white;
+	font-family: Libre Franklin;
+	line-height: 2em;
+	font-size: 1.5em;
+}
+
+.game-page-container {
+	display: none;
+}
+
+#ready-container {
+	position: absolute;
+	left: 50%;
+	top: 37%;
+	transform: translateX(-50%);
+	text-align: center;
+	display: none;
+}
+
+#ready-container h3 {
+	font-size: 4em;
+	color: #fff855;
+	margin-bottom: 30px;
+}
+
+#ready-container button {
+	font-size: 3em;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: white;
+	outline: none;
+}
+
+#board-canvas-container {
+	min-height: 100%;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#board-canvas {
+	background-color: rgba(55, 55, 60, 0.7);
+	border-radius: 5px;
+	border: 3px solid white;
+	display: none;
+}
+
+.flex-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100%;
+	padding: 0 50px;
+}
+
+.container {
+	flex: 1;
+}
+
+.container div {
+	margin: 100px 0px;
+}
+
+.timer-container {
+	text-align: right;
+}
+
+.heading {
+	color: white;
+	font-size: 3em;
+	margin: 30px 0;
+}
+
+.display {
+	color: white;
+	font-size: 8em;
 }

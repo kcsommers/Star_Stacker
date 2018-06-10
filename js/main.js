@@ -1,34 +1,118 @@
-// canvas stuff
-var board = $('#canvas')[0];
-var ctx = board.getContext('2d');
-board.width = 300;
-board.height = 650;
+//***** background-canvas
+var bgCanvas = $('#bg-canvas')[0];
+var bgCtx = bgCanvas.getContext('2d');
+var starsArray = [];
+var colors = ['#f3f086', '#e0e9f3', '#f3ddd9', 
+'#f3a19b', '#96d6f3', '#909292', '#aaacac', 
+'#e0e3e3', '#edefef', '#ffffff', '#ffffff', 
+'#ffffff', '#ffffff', '#ffffff', '#bf81f2', '#ffffff'];
+var animateStars, animationFrame;
 
-var gemColors = ['salmon', 'rebeccapurple', 'lightblue'];
-var stackArray = [];
-var match = false;
-var stackCount = 0;
-var thisStack;
-var currColumn = 3;
-var currRow = 14;
-var matchCount = 0;
-var player1Score = 0;
-var player2Score = 0;
-var player1Turn = true;
-var dropInterval, timerInterval, hangersInterval;	
-var speed = 400;
-var max = 0;
-var timer = 0;
+// background-canvas Star object
+var Star = function(x, y, radius, color) {
+  this.x = x;
+  this.y = y;
+  this.radius = radius;
+  this.color = color;
+  this.drawStar = function() {
+  	bgCtx.beginPath();
+    bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+    bgCtx.fillStyle = this.color;
+    bgCtx.fill();
+  };
+  
+  this.glow = function() {
+  	if(this.radius > 1.5) this.radius -= 0.01;
+  	else this.radius += 1;
+    this.drawStar();
+  };
+};
 
-// ************************ //
-// ******* Main grid ****** //
-
+//***** board-canvas
+var boardCanvas = $('#board-canvas')[0];
+var boardCtx = boardCanvas.getContext('2d');
+boardCanvas.width = 300;
+boardCanvas.height = 650;
 var horizArray = [];
 var vertArray = [];
 var xH = 0;
 var yH = 0;
 var xV = 0;
 var yV = 0;
+
+// horizontal grid line object
+var Horizontal = function(x, y, dx, dy) {
+	this.x = x;
+	this.y = y;
+	this.dx = dx;
+	this.dy = dy;
+	this.draw = function() {
+		boardCtx.beginPath();
+		boardCtx.moveTo(this.x, this.y);
+		boardCtx.lineTo(this.dx, this.dy);
+		boardCtx.strokeStyle = 'white';
+		boardCtx.lineWidth = 3;
+		boardCtx.stroke();
+		boardCtx.shadowOffsetX = 4;
+		boardCtx.shadowOffsetY = 8;
+		boardCtx.shadowBlur = 7;
+		boardCtx.shadowColor = '#000000';
+	};
+};
+
+// vertical grid line object
+var Vertical = function(x, y, dx, dy) {
+	this.x = x;
+	this.y = y;
+	this.dx = dx;
+	this.dy = dy;
+	this.draw = function() {
+		boardCtx.beginPath();
+		boardCtx.moveTo(this.x, this.y);
+		boardCtx.lineTo(this.dx, this.dy);
+		boardCtx.strokeStyle = 'white';
+		boardCtx.lineWidth = 3;
+		boardCtx.stroke();
+		boardCtx.shadowOffsetX = 4;
+		boardCtx.shadowOffsetY = 8;
+		boardCtx.shadowBlur = 7;
+		boardCtx.shadowColor = 'black';
+	};
+};
+
+// push gridlines into arrays
+for(let i = 0; i < 14; i++) {
+	horizArray.push(new Horizontal(xH, yH, xH + (50 * 6), yH));
+	yH += 50;
+}
+for(let i = 0; i < 7; i++) {
+	vertArray.push(new Vertical(xV, yV, xV, yV + (50 * 13)));
+	xV += 50;
+}
+
+var drawGrid = function() {
+	horizArray.forEach(function(line) {line.draw();});
+	vertArray.forEach(function(line) {line.draw();});
+}
+
+
+//***** Global variables
+var gemColors = ['#e73854', '#537bff', '#fff855'];
+var stackArray = [];
+var match = false;
+var player1Turn = true;
+var player1Score = 0;
+var player2Score = 0;
+var stackCount = 0;
+var currColumn = 3;
+var currRow = 14;
+var matchCount = 0;	
+var dropSpeed = 400;
+var maxSpeed = 0;
+var timer = 0;
+var thisStack, dropInterval, timerInterval, hangersInterval;	
+
+// board/grid columns
 var gridColumns = [{
 	id: 0,
 	left: 0,
@@ -71,6 +155,7 @@ var gridColumns = [{
 	rows: {0: null, 1: null, 2: null, 3: null, 4: null, 5: null, 6: null, 
 	7: null, 8: null, 9: null, 10: null, 11: null, 12: null}
 }];
+// board/grid rows
 var gridRows = [
 {id: 0, bottom: 650},
 {id: 1, bottom: 600},
@@ -86,48 +171,8 @@ var gridRows = [
 {id: 11, bottom: 100},
 {id: 12, bottom: 50}
 ];
-// horizontal grid line object
-var Horizontal = function(x, y, dx, dy) {
-	this.x = x;
-	this.y = y;
-	this.dx = dx;
-	this.dy = dy;
-	this.draw = function() {
-		ctx.beginPath();
-		ctx.moveTo(this.x, this.y);
-		ctx.lineTo(this.dx, this.dy);
-		ctx.stroke();
-	};
-};
-//vertical grid line object
-var Vertical = function(x, y, dx, dy) {
-	this.x = x;
-	this.y = y;
-	this.dx = dx;
-	this.dy = dy;
-	this.draw = function() {
-		ctx.beginPath();
-		ctx.moveTo(this.x, this.y);
-		ctx.lineTo(this.dx, this.dy);
-		ctx.stroke();
-	};
-};
 
-var drawGrid = function() {
-	// draw grid
-	horizArray.forEach(function(line) {line.draw();});
-	vertArray.forEach(function(line) {line.draw();});
-}
-// push lines into array
-for(let i = 0; i < 14; i++) {
-	horizArray.push(new Horizontal(xH, yH, xH + (50 * 6), yH));
-	yH += 50;
-}
-for(let i = 0; i < 7; i++) {
-	vertArray.push(new Vertical(xV, yV, xV, yV + (50 * 13)));
-	xV += 50;
-}
-
+// Gem object
 var Gem = function(x, y, radius, color) {
 	thisGem = this;
 	this.x = x;
@@ -136,13 +181,18 @@ var Gem = function(x, y, radius, color) {
 	this.color = color;
 	this.falling = true;
 	this.draw = function() {
-		ctx.beginPath();
-		ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-		ctx.fillStyle = this.color;
-		ctx.fill();
+		boardCtx.beginPath();
+		boardCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+		boardCtx.fillStyle = this.color;
+		boardCtx.fill();
+		boardCtx.shadowOffsetX = 4;
+		boardCtx.shadowOffsetY = 8;
+		boardCtx.shadowBlur = 7;
+		boardCtx.shadowColor = 'black';
 	}
 };
 
+// Stack object (made of three Gems)
 var Stack = function(x, y, id) {
 	thisStack = this;
 	this.x = x;
@@ -160,7 +210,7 @@ var Stack = function(x, y, id) {
 	this.bottom = this.y + 125;
 	this.left = this.x - 25;
 	this.drawStack = function() {
-		ctx.clearRect(0, 0, innerWidth, innerHeight);
+		boardCtx.clearRect(0, 0, innerWidth, innerHeight);
 		drawGrid();
 		stackArray.forEach((stack) => {
 			if( stack.hasOwnProperty('gem1') ) stack.gem1.draw();
@@ -252,105 +302,40 @@ var Stack = function(x, y, id) {
 	};
 };
 
+
+//***** Functions
+
+// scorekeeping
 var scoreKeeper = function(matchArr, matchCount) {
-	let total = 0;
+	let pointsTotal = 0;
+	let i = 0;
+	let scoreDisplay = player1Turn ? $('.player1-score .display') : $('.player2-score .display');
 	if(matchCount === 1) {
-		if(matchArr.length === 3) total += 10;
-		else if(matchArr.length === 4) total += 15;
-		else if(matchArr.length >= 5) total += 20;
+		if(matchArr.length === 3) pointsTotal += 10;
+		else if(matchArr.length === 4) pointsTotal += 15;
+		else if(matchArr.length >= 5) pointsTotal += 20;
 	} 
-	else if(matchCount === 2) total += 20;
-	else if(matchCount >= 3) total += 30;
-	player1Turn ? player1Score += total : player2Score += total;
+	else if(matchCount === 2) pointsTotal += 20;
+	else if(matchCount >= 3) pointsTotal += 30;
+	let scoreInterval = setInterval(function() {
+		if(i < pointsTotal) {
+			if(player1Turn) {
+				player1Score += 1;
+				scoreDisplay.html((player1Score < 10) ? '0' + player1Score : player1Score);
+			}
+			else {
+				player2Score += 1;
+				scoreDisplay.html((player2Score < 10) ? '0' + player2Score : player2Score);
+			}
+			i++;	
+		}
+		else {
+			clearInterval(scoreInterval);
+		}
+	}, 10);
 };
 
-// let intervalsArr = [];
-// var dropHangers = function(hangingGems) {
-	
-// 	let hangingStacks = [];
-// 	hangingGems.forEach(function(gem1, i) {
-// 		let colGems = [gem1];
-// 		let x = 1;
-// 		while( gridColumns[gem1.column].rows[gem1.row + x] ) {
-// 			colGems.push(gridColumns[gem1.column].rows[gem1.row + x]);
-// 			x++;}
-// 		colGems.forEach((gem2) => {
-// 			gem2.dropDistance = (gridColumns[gem1.column].bottom - (gem1.y + 25)) + (50 * colGems.length);
-// 		});
-// 		hangingStacks.push(colGems);
-// 	});
-
-// 	let allHangers = hangingStacks.reduce((acc, curr) => {return acc.concat(curr)}, []);
-
-// 	allHangers.forEach((gem, i) => {
-// 		gridColumns[gem.column].rows[gem.row] = null;
-
-// 		let counter = 0;
-// 		intervalsArr.push(setInterval(function() {
-
-// 			if(counter < (gem.dropDistance / 5)) {
-// 				gem.y += 5;
-// 				counter++;
-// 			}
-// 			else {
-// 				clearInterval(intervalsArr[i]);
-// 				gem.row = rowChecker(gem.y + 25);
-// 				gridColumns[gem.column].rows[gem.row] = gem;
-// 				checkMatches(allHangers);
-// 				allHangers.length = 0;
-// 			}
-
-// 			ctx.clearRect(0, 0, innerWidth, innerHeight);
-// 			drawGrid();
-// 			gem.draw();
-// 			thisStack.drawStack();
-// 		}));
-// 	});
-
-	// hangersInterval = setInterval(function() {
-	// 	allHangers.forEach(function(gem) {
-	// 		let counter = 0;
-	// 		if(counter < gem.dropDistance / 5) {
-	// 			gem.y += 5;
-	// 			counter++;
-	// 			console.log(gem.y, counter, gem.dropDistance / 5)
-	// 		}
-	// 	});
-
-	// 	ctx.clearRect(0, 0, innerWidth, innerHeight);
-	// 	drawGrid();
-	// 	allHangers.forEach(function(gem) {gem.draw();});
-	// 	thisStack.drawStack();
-	// }, 50);
-
-
-	// let intervals = [];
-	// hangingStacks.forEach(function(stack) {
-	// 	for(let i = 0; i < stack.length; i++) {
-	// 		gridColumns[stack[i].column].rows[stack[i].row] = null;
-
-	// 		intervals.push(setInterval(function() {
-	// 			if(stack[0].y + 25 < gridColumns[stack[0].column].bottom + (50 * stack.length)) {
-	// 				stack.forEach(function(gem) {
-	// 					gem.y += 5;
-	// 				});
-	// 			}
-	// 			else {
-	// 				clearInterval(intervals[i]);
-	// 				stack[i].row = rowChecker(stack[i].y + 25);
-	// 				gridColumns[stack[i].column].rows[stack[i].row] = stack[i];
-	// 				console.log(gridColumns);
-	// 				checkMatches(stack); 
-	// 			}
-	// 			ctx.clearRect(0, 0, innerWidth, innerHeight);
-	// 			drawGrid();
-	// 			stack.forEach(function(gem) {gem.draw();});
-	// 			thisStack.drawStack();
-	// 		}, 50));
-	// 	}
-	// });
-// };
-
+// game logic
 var dropHangers = function(hangersArr, spaceObj) {
 	let intervalsArr = [];
 	hangersArr.forEach((gem, i) => {
@@ -369,7 +354,7 @@ var dropHangers = function(hangersArr, spaceObj) {
 				gridColumns[gem.column].rows[gem.row] = gem;
 				console.log('clear');
 			}
-			ctx.clearRect(0, 0, innerWidth, innerHeight);
+			boardCtx.clearRect(0, 0, innerWidth, innerHeight);
 			drawGrid();
 			gem.draw();
 			thisStack.drawStack();
@@ -409,26 +394,7 @@ var removeGems = function(matchesArr) {
 		clearInterval(dropInterval);
 		dropHangers(hangingGems, spaceObj);
 	};
-}
-
-// var removeGems = function(matchesArr) {
-// 	let hangingGems = []; 
-// 	matchesArr.forEach(function(gem) {	
-// 		gridColumns[gem.column].rows[gem.row] = null;
-// 		console.log(gridColumns[gem.column].rows[gem.row]);
-// 		gridColumns[gem.column].bottom += 50;
-// 		delete stackArray[gem.stackId][gem.gemId];
-// 		if( gridColumns[gem.column].rows[gem.row + 1] ) {
-// 			hangingGems.push(gridColumns[gem.column].rows[gem.row + 1]);
-// 		}
-// 		gem = null;
-// 	});
-// 	console.log('second matchArr: ', matchesArr);
-// 	if(hangingGems.length){
-// 		clearInterval(dropInterval);
-// 		dropHangers(hangingGems);
-// 	} 
-// };
+};
 
 var checkMatches = function(stack) {
 	let matches = [];
@@ -527,7 +493,11 @@ var checkMatches = function(stack) {
 
 		matches = matches.filter((item, index, arr) => {return arr.indexOf(item) === index;});
 	});
-	if(matches.length) removeGems(matches);
+	if(matches.length) {
+		removeGems(matches);
+		matchCount++;
+		scoreKeeper(matches, matchCount);
+	}
 };
 
 var columnChecker = function(num) {
@@ -554,6 +524,7 @@ var rowChecker = function(num) {
 	else if(num === 100) return 11;
 };
 
+
 var createStack = function() {
 	currColumn = 3;
 	currRow = 12;
@@ -563,17 +534,76 @@ var createStack = function() {
 	stackArray[stackCount].drawStack();
 };
 
-var init = function() {
-	drawGrid();
+// stars animation
+var animateStars = function() {
+  animationFrame = requestAnimationFrame(animateStars);
+  bgCtx.clearRect(0, 0, innerWidth, innerHeight);
+  
+  for(var i = 0; i < starsArray.length; i++){
+    starsArray[i].glow();
+  }
+}
+
+// initialize bg-canvas stars
+var bgInit = function(){
+	$('.game-intro-container').innerHeight(innerHeight - 10);
+	bgCanvas.width = innerWidth - 10;
+	bgCanvas.height = innerHeight - 10;
+	starsArray = [];
+	for(var i = 0; i <= 1500; i++){
+		var radius = Math.random() * 2 + 1;
+		var color = colors[Math.floor(Math.random() * colors.length)];
+		var x = Math.random() * (innerWidth - radius * 2) + radius;
+		var y = Math.random() * (innerHeight - radius * 2) + radius;
+		starsArray.push(new Star(x, y, radius, color));
+	}
+	animateStars();
+}
+
+// initialize main board
+var mainInit = function() {
 	createStack();
 	dropInterval = setInterval(function() {
 		thisStack.drop();
-	}, speed);
+	}, dropSpeed);
+	drawGrid();
 }
 
 $(document).ready(function() {
-	init();
-	$(document).on('keydown', function(e) {
-		thisStack.moveStack(e, e.keyCode);
+	bgInit();
+
+	$('.game-intro').hide().show('puff', 1200, function(){
+		$('#instructions-btn').click(function() {
+			$('.game-intro').hide();
+			$('.instructions-container').fadeIn(500);
+		});
+
+		$('#start-btn').click(function() {
+			$('.game-intro').hide('puff', 1000);
+			$('.game-intro-container').hide('clip', 1000, function() {
+				$('.game-page-container').show('scale', 1000, function() {
+					$('#ready-container').fadeIn(500);
+					$(document).on('keydown', function(e) {
+						thisStack.moveStack(e, e.keyCode);
+					});
+				});
+			});
+		});
+	});
+
+	$('#begin-btn').click(function() {
+		$('#ready-container').fadeOut();
+		$('#board-canvas').show('scale', 1000, function() {
+			mainInit();
+		});
+	});
+
+	$('#back-btn').click(function() {
+		$('.instructions-container').hide();
+		$('.game-intro').fadeIn(500);
+	});
+
+	$(window).resize(function() {
+		bgInit();
 	});
 });

@@ -1,15 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Columns</title>
+	<title>Star Stacker</title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link href="https://fonts.googleapis.com/css?family=Orbitron|Libre+Franklin" rel="stylesheet">
 </head>
 <body>
-		<div class="canvas_container">
-			<canvas id="canvas"></canvas>
+
+	<canvas id="bg-canvas"></canvas>
+
+
+	<div class="game-intro-container">
+		<div class="game-intro">
+			<div class="title">
+				<h1>Star Stacker</h1>
+			</div>
+			<div class="intro-buttons">
+				<button id="instructions-btn" type="button">Instructions</button>
+				<button id="start-btn" type="button">Start Game</button>
+			</div>
+		</div>
+		<div class="instructions-container">
+			<h3>Instructions</h3>
+			<p>Match three or more stars in any direction and watch them fall! The more consecutive matches you can create, the more points you score. Clear as many as you can before they reach the top. Use the arrow keys to navigate. <br />&larr; Move Left<br />&rarr; Move Right <br />&darr; Drop Down <br />&uarr; Change Order</p>
+			<button type="button" id="back-btn">Back</button>
+		</div>
+	</div>
+
+	<div class="game-page-container">
+		<div id="board-canvas-container">
+			<canvas id="board-canvas"></canvas>
 		</div>
 
+		<div id="ready-container">
+			<h3>Ready Player 1?</h3>
+			<button id="begin-btn" type="button">Begin!</button>
+		</div>
+
+		<div class="flex-container">
+			<div class="container">
+				<div class="player1-score">
+					<p class="heading">Player 1 Score:</p>
+					<p class="display">00</p>
+				</div>
+				<div class="timer-display">
+					<p class="heading">Time</p>
+					<p class="display">0:00</p>
+				</div>
+			</div>
+
+			<div class="container timer-container">
+				<div class="player2-score">
+					<p class="heading">Player 2 Score:</p>
+					<p class="display">00</p>
+				</div>
+				<div class="timer-display">
+					<p class="heading">Speed</p>
+					<p class="display">0</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

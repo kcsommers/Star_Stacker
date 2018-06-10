@@ -335,32 +335,6 @@ var scoreKeeper = function(matchArr, matchCount) {
 	}, 10);
 };
 
-// game logic
-var switchTurns = function() {
-	player1Turn = !player1Turn;
-	// empty stack array
-	stackArray.forEach((stack) => {stack = null;});
-	stackArray.length = 0;
-
-	stackCount = 0;
-	currColumn = 3;
-	currRow = 14;
-	matchCount = 0;	
-	dropSpeed = 300;
-	maxSpeed = 0;
-	timer = 0;
-
-	// clear the board, reset column bottom
-	gridColumns.forEach(function(col) {
-		col.bottom = 650;
-		for(let square in col.rows) {
-			square = null;
-		}
-	});
-
-
-}
-
 
 var dropHangers = function(hangersArr, spaceObj) {
 	let intervalsArr = [];
@@ -547,14 +521,88 @@ var rowChecker = function(num) {
 	else if(num === 100) return 11;
 };
 
+var switchTurns = function() {
+	console.log('switch')
+	player1Turn = !player1Turn;
+	// empty stack array
+	stackArray.forEach((stack) => {stack = null;});
+	stackArray.length = 0;
+
+	// reset globals
+	stackCount = 0;
+	currColumn = 3;
+	currRow = 14;
+	matchCount = 0;	
+	dropSpeed = 300;
+	maxSpeed = 0;
+	timer = 0;
+
+	// clear intervals
+	clearInterval(dropInterval);
+	clearInterval(timerInterval);
+	clearInterval(hangersInterval);
+
+	// clear the board, reset column bottom
+	gridColumns.forEach(function(col) {
+		col.bottom = 650;
+		for(let square in col.rows) {
+			square = null;
+		}
+	});
+
+	// remove event handlers
+	$(document).off('keydown');
+
+	$('#board-canvas').hide();	
+	$('#ready-container h3').html('Ready Player 2?');
+	$('#ready-container').fadeIn(1000);
+}
+
+var Wall = function() {
+	this.x = 0;
+	this.y = -650;
+	this.width = 310;
+	this.height = 660;
+	this.draw = function() {
+		boardCtx.clearRect(-5, -5, innerWidth, innerHeight);
+		boardCtx.fillStyle = '#1a121a';
+		boardCtx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
+
+var gameOver = function() {
+	// clear intervals
+	clearInterval(dropInterval);
+	clearInterval(timerInterval);
+	clearInterval(hangersInterval);
+	let wall = new Wall();
+	let wallInterval = setInterval(function() {
+		console.log('wall')
+		if(wall.y < -5) {
+			thisStack.drawStack();
+			drawGrid();
+			wall.y += 50;
+			wall.draw();
+		}
+		else {
+			clearInterval(wallInterval);
+		}
+	}, 300);
+};
+
 
 var createStack = function() {
-	currColumn = 3;
-	currRow = 12;
-	match = false;
-	matchCount = 0;
-	stackArray.push(new Stack(175, -125, stackCount));
-	stackArray[stackCount].drawStack();
+	if(gridColumns[3].rows[11] === null) {
+		currColumn = 3;
+		currRow = 12;
+		match = false;
+		matchCount = 0;
+		stackArray.push(new Stack(175, -125, stackCount));
+		stackArray[stackCount].drawStack();
+	}
+	else {
+		gameOver();
+	}
 };
 
 // stars animation
@@ -605,6 +653,11 @@ var bgInit = function(){
 // initialize main board
 var mainInit = function() {
 	createStack();
+
+	$(document).on('keydown', function(e) {
+		thisStack.moveStack(e, e.keyCode);
+	});
+
 	dropInterval = setInterval(function() {
 		thisStack.drop();
 	}, dropSpeed);
@@ -640,9 +693,6 @@ $(document).ready(function() {
 			$('.game-intro-container').hide('clip', 1000, function() {
 				$('.game-page-container').show('scale', 1000, function() {
 					$('#ready-container').fadeIn(500);
-					$(document).on('keydown', function(e) {
-						thisStack.moveStack(e, e.keyCode);
-					});
 				});
 			});
 		});

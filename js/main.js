@@ -93,24 +93,26 @@ for(let i = 0; i < 7; i++) {
 var drawGrid = function() {
 	horizArray.forEach(function(line) {line.draw();});
 	vertArray.forEach(function(line) {line.draw();});
+	if(gameOverBool) wall.draw();
 }
 
 
 //***** Global variables
 var gemColors = ['#e73854', '#537bff', '#fff855'];
 var stackArray = [];
+var gameOverBool = false;
 var match = false;
 var player1Turn = true;
 var player1Score = 0;
 var player2Score = 0;
 var stackCount = 0;
 var currColumn = 3;
-var currRow = 14;
+var currRow = 13;
 var matchCount = 0;	
 var dropSpeed = 300;
 var speedCount = 1;
 var timer = 0;
-var thisStack, dropInterval, timerInterval, hangersInterval;	
+var wall, thisStack, dropInterval, timerInterval, hangersInterval;	
 
 // board/grid columns
 var gridColumns = [{
@@ -179,7 +181,6 @@ var Gem = function(x, y, radius, color) {
 	this.y = y;
 	this.radius = radius;
 	this.color = color;
-	this.falling = true;
 	this.draw = function() {
 		boardCtx.beginPath();
 		boardCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
@@ -225,10 +226,11 @@ var Stack = function(x, y, id) {
 			this.gem1.y += 25;
 			this.gem2.y += 25;
 			this.gem3.y += 25;
+			if(this.bottom % 2 !== 0) currRow = rowChecker(this.bottom);
+			console.log(currRow);
 			this.drawStack();
 		}
 		else {
-			currRow = rowChecker(this.bottom);
 			gridColumns[currColumn].bottom -= 150;
 			this.gem1.column = currColumn;
 			this.gem2.column = currColumn;
@@ -268,7 +270,8 @@ var Stack = function(x, y, id) {
 	this.moveStack = function(e, keyCode) {
 		switch(keyCode) {
 			case 37:
-				if(currColumn > 0) {
+				console.log('left:')
+				if( (currColumn > 0) && (!gridColumns[currColumn - 1].rows[currRow]) )  {
 					this.gem1.x -= 50;
 					this.gem2.x -= 50;
 					this.gem3.x -= 50;
@@ -285,8 +288,8 @@ var Stack = function(x, y, id) {
 				this.gem3.y = gem1Temp;
 				this.drawStack();
 				break;	
-			case 39:
-				if(currColumn < 5) {
+			case 39: 
+				if( (currColumn < 5) && (!gridColumns[currColumn + 1].rows[currRow]) ) {
 					this.gem1.x += 50;
 					this.gem2.x += 50;
 					this.gem3.x += 50;
@@ -507,26 +510,76 @@ var columnChecker = function(num) {
 }
 
 var rowChecker = function(num) {
-	if(num === 650) return 0;
-	else if(num === 600) return 1;
-	else if(num === 550) return 2;
-	else if(num === 500) return 3;
-	else if(num === 450) return 4;
-	else if(num === 400) return 5;
-	else if(num === 350) return 6;
-	else if(num === 300) return 7;
-	else if(num === 250) return 8;
-	else if(num === 200) return 9;
-	else if(num === 150) return 10;
-	else if(num === 100) return 11;
+	if(num === 625) return 0;
+	else if(num === 575) return 1;
+	else if(num === 525) return 2;
+	else if(num === 475) return 3;
+	else if(num === 425) return 4;
+	else if(num === 375) return 5;
+	else if(num === 325) return 6;
+	else if(num === 275) return 7;
+	else if(num === 225) return 8;
+	else if(num === 175) return 9;
+	else if(num === 125) return 10;
+	else if(num === 75) return 11;
+	else if(num === 25) return 12;
 };
 
-var switchTurns = function() {
-	console.log('switch')
+var declareWinner = function() {
 	player1Turn = !player1Turn;
+	gameOverBool = false;
 	// empty stack array
 	stackArray.forEach((stack) => {stack = null;});
 	stackArray.length = 0;
+
+	if(player1Score > player2Score) {
+		$('#ready-container h3').html('Player 1,<br /> you\'re a <span style="color: white;">S</span><span style="color: #e73854;">T</span><span style="color: #537bff;">A</span>R<span style="color: white;">!</span>');
+	} 
+	else {
+		$('#ready-container h3').html('Player 2,<br /> you\'re a <span style="color: white;">S</span><span style="color: #e73854;">T</span><span style="color: #537bff;">A</span>R<span style="color: white;">!</span>');
+	}
+	// reset scores
+	player1Score = 0;
+	player2Score = 0;
+	
+	$('#board-canvas').hide();	
+	$('#begin-btn').html('Play Again?')
+	$('#ready-container').fadeIn(1000);
+}
+
+var switchTurns = function() {
+	player1Turn = !player1Turn;
+	gameOverBool = false;
+	// empty stack array
+	stackArray.forEach((stack) => {stack = null;});
+	stackArray.length = 0;
+
+	$('#board-canvas').hide();
+	$('#begin-btn').html('Begin')	
+	$('#ready-container h3').html('Ready Player 2?');
+	$('#ready-container').fadeIn(1000);
+}
+
+var Wall = function() {
+	this.x = 0;
+	this.y = 0;
+	this.width = 310;
+	this.height = 0;
+	this.draw = function() {
+		boardCtx.fillStyle = '#19151d';
+		boardCtx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
+
+var gameOver = function() {
+	gameOverBool = true;
+	// clear intervals
+	clearInterval(dropInterval);
+	clearInterval(timerInterval);
+	clearInterval(hangersInterval);
+
+	// remove event handlers
+	$(document).off('keydown');
 
 	// reset globals
 	stackCount = 0;
@@ -537,62 +590,33 @@ var switchTurns = function() {
 	maxSpeed = 0;
 	timer = 0;
 
-	// clear intervals
-	clearInterval(dropInterval);
-	clearInterval(timerInterval);
-	clearInterval(hangersInterval);
-
 	// clear the board, reset column bottom
 	gridColumns.forEach(function(col) {
 		col.bottom = 650;
 		for(let square in col.rows) {
-			square = null;
+			col.rows[square] = null;
 		}
 	});
 
-	// remove event handlers
-	$(document).off('keydown');
-
-	$('#board-canvas').hide();	
-	$('#ready-container h3').html('Ready Player 2?');
-	$('#ready-container').fadeIn(1000);
-}
-
-var Wall = function() {
-	this.x = 0;
-	this.y = -650;
-	this.width = 310;
-	this.height = 660;
-	this.draw = function() {
-		boardCtx.clearRect(-5, -5, innerWidth, innerHeight);
-		boardCtx.fillStyle = '#1a121a';
-		boardCtx.fillRect(this.x, this.y, this.width, this.height);
-	}
-}
-
-var gameOver = function() {
-	// clear intervals
-	clearInterval(dropInterval);
-	clearInterval(timerInterval);
-	clearInterval(hangersInterval);
-	let wall = new Wall();
+	// drop wall
+	wall = new Wall();
 	let wallInterval = setInterval(function() {
-		console.log('wall')
-		if(wall.y < -5) {
+		if(wall.height < 650) {
+			wall.height += 50;
 			thisStack.drawStack();
 			drawGrid();
-			wall.y += 50;
-			wall.draw();
 		}
 		else {
 			clearInterval(wallInterval);
+			if(player1Turn) switchTurns();
+			else declareWinner();
 		}
-	}, 300);
+	}, 130);
 };
 
 
 var createStack = function() {
-	if(gridColumns[3].rows[11] === null) {
+	if(gridColumns[3].rows[12] === null) {
 		currColumn = 3;
 		currRow = 12;
 		match = false;
@@ -662,6 +686,9 @@ var mainInit = function() {
 		thisStack.drop();
 	}, dropSpeed);
 	drawGrid();
+
+	$('.player1-score .display').html((player1Score < 10) ? '0' + player1Score : player1Score);
+	$('.player2-score .display').html((player2Score < 10) ? '0' + player2Score : player1Score);
 
 	$('.speed-container .display').html(speedCount);
 	let minutes = 0;

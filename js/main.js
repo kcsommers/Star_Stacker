@@ -107,8 +107,8 @@ var stackCount = 0;
 var currColumn = 3;
 var currRow = 14;
 var matchCount = 0;	
-var dropSpeed = 400;
-var maxSpeed = 0;
+var dropSpeed = 300;
+var speedCount = 1;
 var timer = 0;
 var thisStack, dropInterval, timerInterval, hangersInterval;	
 
@@ -336,6 +336,32 @@ var scoreKeeper = function(matchArr, matchCount) {
 };
 
 // game logic
+var switchTurns = function() {
+	player1Turn = !player1Turn;
+	// empty stack array
+	stackArray.forEach((stack) => {stack = null;});
+	stackArray.length = 0;
+
+	stackCount = 0;
+	currColumn = 3;
+	currRow = 14;
+	matchCount = 0;	
+	dropSpeed = 300;
+	maxSpeed = 0;
+	timer = 0;
+
+	// clear the board, reset column bottom
+	gridColumns.forEach(function(col) {
+		col.bottom = 650;
+		for(let square in col.rows) {
+			square = null;
+		}
+	});
+
+
+}
+
+
 var dropHangers = function(hangersArr, spaceObj) {
 	let intervalsArr = [];
 	hangersArr.forEach((gem, i) => {
@@ -390,10 +416,7 @@ var removeGems = function(matchesArr) {
 		} 
 	});
 
-	if(hangingGems.length) {
-		clearInterval(dropInterval);
-		dropHangers(hangingGems, spaceObj);
-	};
+	if(hangingGems.length) dropHangers(hangingGems, spaceObj);
 };
 
 var checkMatches = function(stack) {
@@ -544,6 +567,25 @@ var animateStars = function() {
   }
 }
 
+var speedUp = function() {
+	speedCount += 1;
+	$('.speed-container .display').html(speedCount);
+	if(speedCount < 5) {
+
+		if(speedCount > 3) {
+			dropSpeed -= 50;
+		} 
+		else {
+			dropSpeed -= 100;
+		}
+
+		clearInterval(dropInterval);
+		dropInterval = setInterval(function() {
+			thisStack.drop();
+		}, dropSpeed); 
+	}
+}
+
 // initialize bg-canvas stars
 var bgInit = function(){
 	$('.game-intro-container').innerHeight(innerHeight - 10);
@@ -567,6 +609,21 @@ var mainInit = function() {
 		thisStack.drop();
 	}, dropSpeed);
 	drawGrid();
+
+	$('.speed-container .display').html(speedCount);
+	let minutes = 0;
+	timerInterval = setInterval(function() {
+		timer++;
+		if(timer === 30 || timer === 60) {
+			speedUp();
+		}
+
+		if(timer === 60) {
+			minutes++;
+			timer = 0;
+		}
+		$('.timer-container .display').html(minutes + ':' + ((timer < 10) ? '0' + timer : timer));
+	}, 1000);
 }
 
 $(document).ready(function() {

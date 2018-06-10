@@ -136,6 +136,14 @@ body {
 	padding: 0 50px;
 }
 
+#begin-btn {
+	transition: all 0.2s ease;
+}
+
+#begin-btn:hover {
+	color: rgb(229,59,87);
+}
+
 .container {
 	flex: 1;
 }
@@ -144,7 +152,7 @@ body {
 	margin: 100px 0px;
 }
 
-.timer-container {
+.right-container {
 	text-align: right;
 }
 

@@ -399,31 +399,29 @@ var speedUp = function() {
 }
 
 var dropHangers = function(hangersArr, spaceObj) {
+	console.log('Hangers:', hangersArr);
 	let intervalsArr = [];
 	hangersArr.forEach((gem, i) => { // for each hanging gem
 
-		gridColumns[gem.column].rows[gem.row] = null; // set there current position to null
+		gridColumns[gem.column].rows[gem.row] = null; // set their current position to null
 		
 		let yCount = 0; 
 		intervalsArr.push(setInterval(function() {
-			console.log(intervalsArr);
 			if( yCount < (spaceObj[gem.column] / 5) ) {
-				console.log('tick');
 				gem.y += 5;
 				yCount++;
 			} 
 			else {	
 				clearInterval(intervalsArr[i]);
-				intervalsArr.length = 0;
 				gem.row = rowChecker(gem.y);
 				gridColumns[gem.column].rows[gem.row] = gem;
-				console.log('clear');
+				checkMatches([gem]);
 			}
 			boardCtx.clearRect(0, 0, innerWidth, innerHeight);
 			drawGrid();
 			gem.draw();
 			thisStack.drawStack();
-		}, 10));
+		}));
 	});
 };
 
@@ -431,14 +429,18 @@ var removeGems = function(matchesArr) {
 	let hangingGems = [];
 	let spaceObj = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}; // holds the distance each gem should travel in its column
 	
-	matchesArr.forEach((gem) => { // for each matching gem...
+	// set each matching gems place in the grid to null BEFORE checking for hangers 
+	// (this was causing a bug on multiple matches)
+	matchesArr.forEach((gem) => {
 		gem.row = rowChecker(gem.y); // make sure it has the right row
-		gridColumns[gem.column].rows[gem.row] = null; // set its place in the grid to null
+		gridColumns[gem.column].rows[gem.row] = null;
 		gridColumns[gem.column].bottom += 50;  // add to its column's bottom
 		delete stackArray[gem.stackId][gem.gemId]; // delete it from its stack
+	});
 
-		// if there is a gem in the row above it
-		// push it into the hangingGems array
+	// check for hangers
+	matchesArr.forEach((gem) => {
+		// if there is a gem in the row above it, push it into the hangingGems array
 		if(gridColumns[gem.column].rows[gem.row + 1]) {
 			hangingGems.push(gridColumns[gem.column].rows[gem.row + 1]);
 		}
@@ -447,7 +449,7 @@ var removeGems = function(matchesArr) {
 
 	hangingGems.forEach((gem) => { // for each hanging gem...
 		// without checking below the first row,
-		// while there is space below the hanger, add 50 to the column in spaceObj
+		// while there is space below the first hanger, add 50 to its column in spaceObj
 		let j = 1;
 		while( gridColumns[gem.column].rows[gem.row - j] >= 0
 			&& !gridColumns[gem.column].rows[gem.row - j] ) {
@@ -540,7 +542,7 @@ var checkMatches = function(stack) {
 			matches.push(gem, rows[gemRow + 1], rows[gemRow - 1]);
 		}
 
-		// column bottom (searching down)
+		// column top/bottom (searching down)
 		if(rows[gemRow - 1] && rows[gemRow - 2]
 			&& color === rows[gemRow - 1].color
 			&& color === rows[gemRow - 2].color) {

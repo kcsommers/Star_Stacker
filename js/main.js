@@ -604,6 +604,7 @@ var checkMatches = function(stack) {
 	// increase the matchCount (for scoring)
 	// pass each into scoreKeeper function
 	if(matches.length) {
+		$('#match-sound')[0].play();
 		removeGems(matches);
 		matchCount++;
 		scoreKeeper(matches, matchCount);
@@ -785,9 +786,11 @@ $(document).ready(function() {
 		});
 
 		$('#start-btn').click(function() {
-			$('.game-intro').hide('puff', 1000);
-			$('.game-intro-container').hide('clip', 1000, function() {
+			$('#game-entrance-sound')[0].play();
+			$('.game-intro').hide('puff', 900);
+			$('.game-intro-container').hide('clip', 900, function() {
 				$('.game-page-container').show('scale', 1000, function() {
+					$('#ambience')[0].play();
 					// fade in ready-container after rest of game page appears
 					$('#ready-container').fadeIn(500);
 				});

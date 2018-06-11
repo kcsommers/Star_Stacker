@@ -1,5 +1,5 @@
 # Project 1 - Star Stacker
-WDI Unit 1 Game Project
+**WDI Unit 1 Game Project**
 
 With this project, I feel like I got my first glimpse at what its like to watch your code get away from you, and I learned a great deal from it. I decided to create this game, which is based on a game I used to love playing called Columns, knowing that it would be a challenge. In fact that is a big reason why I chose it - I thought it would be just the right amount of challenging to feel attainable but to really push me, and it turns out I got a little more than I bargained for. And while the game is far from perfect (there are plenty of bugs and glitches that I hope and plan to revisit as we progress through the course), I can safely say that I am happy with the results, and even more so with how much I learned about myself as a coder. 
 

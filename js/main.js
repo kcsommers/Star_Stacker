@@ -430,7 +430,7 @@ var removeGems = function(matchesArr) {
 	let spaceObj = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}; // holds the distance each gem should travel in its column
 	
 	// set each matching gems place in the grid to null BEFORE checking for hangers 
-	// (this was causing a bug on multiple matches)
+	// (this was causing a bug on multiple direction matches)
 	matchesArr.forEach((gem) => {
 		gem.row = rowChecker(gem.y); // make sure it has the right row
 		gridColumns[gem.column].rows[gem.row] = null;
@@ -764,7 +764,7 @@ var mainInit = function() {
 	let minutes = 0;
 	timerInterval = setInterval(function() {
 		timer++;
-		if(timer === 30 || timer === 60) {
+		if(timer === 15 || timer === 30 || timer === 45 || timer === 60) {
 			speedUp();
 		}
 		if(timer === 60) {
